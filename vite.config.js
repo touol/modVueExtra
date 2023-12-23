@@ -4,8 +4,9 @@ import {parse, resolve} from 'path'
 import { fileURLToPath } from 'url'
 
 // https://vitejs.dev/config/
-export default defineConfig(({mode})=>{
+export default defineConfig(async ({mode})=>{
     process.env = {...process.env,...loadEnv(mode, './')}
+    
     return {
         appType: 'custom',
         base: mode == 'production' ? process.env.VITE_APP_BASE_URL : '/',

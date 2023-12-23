@@ -7,9 +7,11 @@ import snippets from "./configs/snippets.js";
 import settings from "./configs/settings.js";
 import gtsapirules from "./configs/gtsapirules.js"
 import FormData from 'form-data';
+import 'dotenv/config'
+
 // console.log(config)
 const form = new FormData()
-        
+//console.log('process.env',process.env)        
 form.append('config', JSON.stringify(config))
 
 if(config.schema){
@@ -35,7 +37,9 @@ form.append('gtsapirules', JSON.stringify(gtsapirules))
 
 let error = null;
 try {
-    const res = await axios.post('http://modx.pl/api/package',form).catch(err => {
+    const url = `${process.env.VITE_APP_PROTOCOL}://${process.env.VITE_APP_HOST}/api/package`
+    //console.log('url',url)
+    const res = await axios.post(url,form).catch(err => {
     if (err.response.status === 404) {
         throw new Error(`${err.config.url} not found`);
     }
@@ -51,4 +55,4 @@ try {
     error = err;
 }
 if(error)
-    console.log(error.message)
+    console.log('error',error.message)
