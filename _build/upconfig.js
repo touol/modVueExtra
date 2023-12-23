@@ -41,7 +41,12 @@ try {
     }
     throw err;
     });
-    console.log(res.data)
+    if(res.data.success){
+        console.log(res.data.message)
+    }else{
+        console.log(res.data)
+    }
+    
 }catch (err) {
     error = err;
 }
