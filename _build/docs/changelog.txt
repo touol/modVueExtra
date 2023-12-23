@@ -1,0 +1,5 @@
+Changelog for modVueExtra.
+1.0.0-beta
+==============
+- init.
+- Установка пакета на модекс.

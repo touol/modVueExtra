@@ -1,8 +1,8 @@
 export default {
-    'modVue':{
-        'file':'modVue.php',
-        'description':'',
-        'update':false,
-        'properties':{}
+    modVue:{
+        file:'modVue.php',
+        description:'',
+        update:false,
+        properties:{}
     },
 }
