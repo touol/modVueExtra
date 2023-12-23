@@ -1,34 +1,89 @@
-console.log('upload config on site!');
-
-import fs from 'fs/promises';
+import fs from 'fs';
 import axios from 'axios';
-import FormData from 'form-data';
+//import FormData from 'form-data';
 import 'dotenv/config'
-import prompt from 'prompt';
+import prompt from 'prompt'
 
-// console.log(config)
-const form = new FormData()
-//console.log('process.env',process.env)        
-form.append('config', JSON.stringify(config))
+import os from "os";
+import path from "path";
+import {fileURLToPath} from 'url';
 
-let error = null;
-try {
-    const url = `${process.env.VITE_APP_PROTOCOL}://${process.env.VITE_APP_HOST}/api/package`
-    //console.log('url',url)
-    const res = await axios.post(url,form).catch(err => {
-    if (err.response.status === 404) {
-        throw new Error(`${err.config.url} not found`);
-    }
-    throw err;
-    });
-    if(res.data.success){
-        console.log(res.data.message)
-    }else{
+prompt.start();
+
+prompt.get(['username','password'], async function (err, result) {
+    if (err) { return onErr(err); }
+    // console.log('Command-line input received:');
+    console.log('Получаем токен для ' + result.username);
+
+    let error = null;
+    try {
+        const url = `${process.env.VITE_APP_PROTOCOL}://${process.env.VITE_APP_HOST}/api/security/login`
+        // Axios automatically serializes `{ answer: 42 }` into JSON.
+        const res = await axios.post(url, { username: result.username, password: result.password })
+
         console.log(res.data)
+        if(res.data.token){
+            setEnvValue('DEV_TOKEN', res.data.token)
+        }
+    }catch (err) {
+        error = err;
     }
-    
-}catch (err) {
-    error = err;
+    if(error)
+        console.log('error axios',error.message)
+
+});
+
+function onErr(err) {
+    console.log(err);
+    return 1;
 }
-if(error)
-    console.log('error',error.message)
+
+const __filename = fileURLToPath(import.meta.url);
+let __dirname = path.dirname(__filename);
+__dirname = path.dirname(__dirname);
+const envFilePath = path.resolve(__dirname, ".env");
+
+// read .env file & convert to array
+const readEnvVars = () => fs.readFileSync(envFilePath, "utf-8").split(os.EOL);
+
+/**
+ * Finds the key in .env files and returns the corresponding value
+ *
+ * @param {string} key Key to find
+ * @returns {string|null} Value of the key
+ */
+const getEnvValue = (key) => {
+  // find the line that contains the key (exact match)
+  const matchedLine = readEnvVars().find((line) => line.split("=")[0] === key);
+  // split the line (delimiter is '=') and return the item at index 2
+  return matchedLine !== undefined ? matchedLine.split("=")[1] : null;
+};
+
+/**
+ * Updates value for existing key or creates a new key=value line
+ *
+ * This function is a modified version of https://stackoverflow.com/a/65001580/3153583
+ *
+ * @param {string} key Key to update/insert
+ * @param {string} value Value to update/insert
+ */
+const setEnvValue = (key, value) => {
+  const envVars = readEnvVars();
+  const targetLine = envVars.find((line) => line.split("=")[0] === key);
+  if (targetLine !== undefined) {
+    // update existing line
+    const targetLineIndex = envVars.indexOf(targetLine);
+    // replace the key/value with the new value
+    envVars.splice(targetLineIndex, 1, `${key}="${value}"`);
+  } else {
+    // create new key value
+    envVars.push(`${key}="${value}"`);
+  }
+  // write everything back to the file system
+  fs.writeFileSync(envFilePath, envVars.join(os.EOL));
+};
+
+// examples
+// console.log(getEnvValue('KEY_1'));
+// setEnvValue('KEY_1', 'value 1')
+

@@ -39,7 +39,9 @@ let error = null;
 try {
     const url = `${process.env.VITE_APP_PROTOCOL}://${process.env.VITE_APP_HOST}/api/package`
     //console.log('url',url)
-    const res = await axios.post(url,form).catch(err => {
+    const res = await axios.post(url,form,{
+        headers: { Authorization: `Bearer ${process.env.DEV_TOKEN}` }
+    }).catch(err => {
     if (err.response.status === 404) {
         throw new Error(`${err.config.url} not found`);
     }
@@ -55,4 +57,4 @@ try {
     error = err;
 }
 if(error)
-    console.log('error',error.message)
+    console.log('error',error.message,error.response.data)

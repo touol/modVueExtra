@@ -7,6 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "copy": "node ./_build/copy.js",
+    "get_token": "node ./_build/get_token.js",
     "upconfig": "node ./_build/upconfig.js",
     "preview": "vite preview"
   },
