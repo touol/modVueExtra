@@ -26,6 +26,15 @@ export default defineConfig(async ({mode})=>{
             assetsDir: '',
             outDir: process.env.VITE_APP_OUTPUT_DIR,
             rollupOptions: {
+                external: ['vue'],
+                // plugins: [ {
+                //     name: 'replace-importer', 
+                //     renderChunk(code) {
+                //       // add esm cdn link
+                //       code = code.replace(/from.*("|'vue"|')/g, 'from "/assets/components/gtsapi/js/web/vue.global.prod.js"')
+                //       return { code, map: null }
+                //     }
+                // }],
                 input: {
                     main: resolve(__dirname,'src/main.js')
                 },
@@ -47,6 +56,9 @@ export default defineConfig(async ({mode})=>{
                     },
                     chunkFileNames: 'js/chunks/[name]-[hash].js',
                     entryFileNames: 'js/[name].js',
+                    globals: {
+                        vue: 'Vue'
+                    }
                 }
             }
         },

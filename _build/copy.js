@@ -19,7 +19,9 @@ prompt.get(['packagename'], function (err, result) {
             '../' + result.packagename + '/_build/docs/*',
             '../' + result.packagename + '/_build/config.js',
             '../' + result.packagename + '/src/main.js',
+            '../' + result.packagename + '/public/checkdebug.txt',
             '../' + result.packagename + '/.env',
+            '../' + result.packagename + '/.json',
         ],
       
         //Replacement to make (string or regex) 
